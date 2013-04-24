@@ -46,7 +46,7 @@ user=nginx
 
 start() {
       for app in ${apps[@]}; do
-        echo -n "Compiling app ${app} ...done"
+        echo "Compiling app ${app} ...done"
         cd ${webapps_folder}/${app}
         ${compile}
 
@@ -78,7 +78,7 @@ start() {
 restart() {
       for app in ${apps[@]}; do
 
-        echo -n "Compiling app ${app} ...done"
+        echo "Compiling app ${app} ...done"
         cd ${webapps_folder}/${app}
         ${compile}
 
@@ -133,9 +133,9 @@ stop() {
 status() {
       for app in ${apps[@]}; do
 
-        #cd ${webapps_folder}/${app}
-        #${play} tasks
-        #RETVAL=$?
+        cd ${webapps_folder}/${app}
+        # ${play} tasks
+        # RETVAL=$?
 
       done
 }
