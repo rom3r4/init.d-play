@@ -1,0 +1,159 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          Play framework
+# Required-Start:    $syslog
+# Required-Stop:     $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: play
+# Description:
+#
+### END INIT INFO
+
+# Debian 6 squeeze
+# place this script in /etc/init.d/play
+
+# chmod ug+x /etc/init.d/play
+# update-rc.d play defauls
+#
+# update-rc.d play remove 
+
+#
+# Script to automate CI deployments. Simply stop all
+# servers, change the "current" symlinks to the given
+# target folder and finally, start all servers
+#
+
+export JAVA_HOME="/usr/lib/jvm/default-java"
+
+# play_home="/usr/local/lib/play-2.0.4"
+play="${play_home}/play"
+
+play=`which play`
+
+webapps_folder="/www"
+play_opts="-Dhttp.address=127.0.0.1"
+# clean, compile
+compile="${play} compile"
+# apps=( "foo" "bar" "api" )
+apps=( "helpmeproject" )
+user=nginx
+
+
+. /lib/lsb/init-functions
+
+
+start() {
+      for app in ${apps[@]}; do
+        echo -n "Compiling app ${app} ...done"
+        cd ${webapps_folder}/${app}
+        ${compile}
+
+        echo -n "Starting server ${app} ..."
+
+        # rm -f ${webapps_folder}/${app}/server.pid > /dev/null
+        # su $user -c "${play} ${play_opts} start ${webapps_folder}/${app} --%production >/dev/null"
+        # rm -f ${webapps_folder}/${app}/RUNNING_PID > /dev/null
+
+        if [ -f ${webapps_folder}/${app}/RUNNING_PID ];then
+          kill -9 `cat ${webapps_folder}/${app}/RUNNING_PID`
+          rm -rf ${webapps_folder}/${app}/RUNNING_PID > /dev/null
+        fi
+
+        start-stop-daemon --pidfile ${webapps_folder}/${app}/RUNNING_PID --chuid ${user} --exec ${webapps_folder}/${app}/target/start --background --start -- "${play_opts}"
+
+        RETVAL=$?
+
+        if [ $RETVAL -eq 0 ]; then
+            echo "done"
+            log_end_msg 0
+        else
+            echo "done"
+            log_end_msg 1
+        fi
+
+      done
+}
+restart() {
+      for app in ${apps[@]}; do
+
+        echo -n "Compiling app ${app} ...done"
+        cd ${webapps_folder}/${app}
+        ${compile}
+
+        echo -n "Restarting server ${app} ..."
+
+        if [ -f ${webapps_folder}/${app}/RUNNING_PID ];then
+          kill -9 `cat ${webapps_folder}/${app}/RUNNING_PID`
+          rm -rf ${webapps_folder}/${app}/RUNNING_PID > /dev/null
+        fi
+
+        # rm -f ${webapps_folder}/${app}/server.pid > /dev/null
+        # su $user -c "${play} ${play_opts} start ${webapps_folder}/${app} --%production >/dev/null"
+        # rm -f ${webapps_folder}/${app}/RUNNING_PID > /dev/null
+
+        start-stop-daemon --pidfile ${webapps_folder}/${app}/RUNNING_PID --chuid ${user} --exec ${webapps_folder}/${app}/target/start --background --start -- "${play_opts}"
+
+        RETVAL=$?
+
+        if [ $RETVAL -eq 0 ]; then
+            echo "done"
+            log_end_msg 0
+        else
+            echo "error"
+            log_end_msg 1
+        fi
+
+      done
+}
+stop() {
+      for app in ${apps[@]}; do
+
+        echo -n "Stopping server ${app} ..."
+
+        if [ -f ${webapps_folder}/${app}/RUNNING_PID ];then
+          kill -9 `cat ${webapps_folder}/${app}/RUNNING_PID`
+          rm -rf ${webapps_folder}/${app}/RUNNING_PID > /dev/null
+        fi
+        # ${play} stop ${webapps_folder}/${app} > /dev/null
+
+        if [ $RETVAL -eq 0 ]; then
+            echo "done"
+            log_end_msg 0
+        else
+            echo "error"
+            log_end_msg 1
+        fi
+
+      done
+}
+status() {
+      for app in ${apps[@]}; do
+
+        ${play} status ${webapps_folder}/${app}
+        RETVAL=$?
+
+      done
+}
+
+
+case "$1" in
+    start)
+      start
+      ;;
+    restart)
+      restart
+      ;;
+    stop)
+      stop
+      ;;
+    status)
+      status
+      ;;
+    *)
+      echo "Usage: $0 {start|stop|restart|status}" >&2
+      exit 1
+      ;;
+esac
+
+exit 0
