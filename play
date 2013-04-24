@@ -10,6 +10,7 @@
 #
 ### END INIT INFO
 
+
 # Debian 6 squeeze
 # place this script in /etc/init.d/play
 
@@ -111,8 +112,10 @@ stop() {
 
         echo -n "Stopping server ${app} ..."
 
+        RETVAL=0
         if [ -f ${webapps_folder}/${app}/RUNNING_PID ];then
           kill -9 `cat ${webapps_folder}/${app}/RUNNING_PID`
+          RETVAL=$?
           rm -rf ${webapps_folder}/${app}/RUNNING_PID > /dev/null
         fi
         # ${play} stop ${webapps_folder}/${app} > /dev/null
@@ -130,8 +133,9 @@ stop() {
 status() {
       for app in ${apps[@]}; do
 
-        ${play} status ${webapps_folder}/${app}
-        RETVAL=$?
+        #cd ${webapps_folder}/${app}
+        #${play} tasks
+        #RETVAL=$?
 
       done
 }
