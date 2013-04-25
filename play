@@ -34,8 +34,8 @@ play=`which play`
 
 webapps_folder="/www"
 play_opts="-Dhttp.address=127.0.0.1"
-# clean, compile
 compile="${play} compile stage"
+clean_compile="${play} clean compile stage"
 # apps=( "foo" "bar" "api" )
 apps=( "helpmeproject" )
 user=nginx
@@ -61,7 +61,7 @@ start() {
           rm -rf ${webapps_folder}/${app}/RUNNING_PID > /dev/null
         fi
 
-        start-stop-daemon --pidfile ${webapps_folder}/${app}/RUNNING_PID --chuid ${user} --exec ${webapps_folder}/${app}/target/start --background --start -- "${play_opts}"
+        start-stop-daemon --pidfile ${webapps_folder}/${app}/RUNNING_PID --chuid ${user} --chdir ${webapps_folder}/${app}  --exec ${webapps_folder}/${app}/target/start --background --start -- "${play_opts}"
 
         RETVAL=$?
 
@@ -80,7 +80,7 @@ restart() {
 
         echo "Compiling app ${app} ...done"
         cd ${webapps_folder}/${app}
-        ${compile}
+        ${clean_compile}
 
         echo -n "Restarting server ${app} ..."
 
@@ -93,7 +93,7 @@ restart() {
         # su $user -c "${play} ${play_opts} start ${webapps_folder}/${app} --%production >/dev/null"
         # rm -f ${webapps_folder}/${app}/RUNNING_PID > /dev/null
 
-        start-stop-daemon --pidfile ${webapps_folder}/${app}/RUNNING_PID --chuid ${user} --exec ${webapps_folder}/${app}/target/start --background --start -- "${play_opts}"
+        start-stop-daemon --pidfile ${webapps_folder}/${app}/RUNNING_PID --chdir ${webapps_folder}/${app} --chuid ${user} --exec ${webapps_folder}/${app}/target/start --background --start -- "${play_opts}"
 
         RETVAL=$?
 
