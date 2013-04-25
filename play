@@ -35,7 +35,7 @@ play=`which play`
 webapps_folder="/www"
 play_opts="-Dhttp.address=127.0.0.1"
 # clean, compile
-compile="${play} compile"
+compile="${play} compile stage"
 # apps=( "foo" "bar" "api" )
 apps=( "helpmeproject" )
 user=nginx
