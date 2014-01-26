@@ -6,7 +6,7 @@ Configurable Init.d script, for multiple Play 2 Framework apps in Debian GNU\Lin
 ### installation
 
     # cd /etc/init.d
-    # wget https://raw.github.com/julianromerajuarez/init.d-play/master/play
+    # wget https://raw.github.com/julianromera/init.d-play/master/play
     # update-rc.d play defaults
     
 ### 'License'
