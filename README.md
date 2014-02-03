@@ -1,7 +1,7 @@
 ### [init.d-play]()
 
 
-Configurable Init.d script, for multiple Play 2 Framework apps
+Configurable Init.d script for multiple Play 2 Framework apps
 
 ### installation  
 
