@@ -1,9 +1,11 @@
 ### [init.d-play]()
 
 
-Configurable Init.d script, for multiple Play 2 Framework apps in Debian GNU\Linux
+Configurable Init.d script, for multiple Play 2 Framework apps
 
-### installation
+### installation  
+
+( Tested on debian 7.0 wheezy Linux )
 
     # cd /etc/init.d
     # wget https://raw.github.com/julianromera/init.d-play/master/play
